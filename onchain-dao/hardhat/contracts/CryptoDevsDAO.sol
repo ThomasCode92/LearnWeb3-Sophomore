@@ -37,4 +37,19 @@ contract CryptoDevsDAO is Ownable {
     // Reference to the FakeNFTMarketplace and CryptoDevsNFT contracts
     IFakeNFTMarketplace nftMarketplace;
     ICryptoDevsNFT cryptoDevsNFT;
+
+    // A modifier which only allows a function be
+    // called by someone who owns at least 1 CryptoDevsNFT
+    modifier nftHolderOnly() {
+        require(cryptoDevsNFT.balanceOf(msg.sender) > 0, 'NOT_A_DAO_MEMBER');
+        _;
+    }
+
+    // A payable constructor which initializes the contract
+    // instances for FakeNFTMarketplace and CryptoDevsNFT
+    // The payable allows this contract to accept an ETH deposit when it is being deployed
+    constructor(address _nftMarketplace, address _cryptoDevsNFT) payable {
+        nftMarketplace = IFakeNFTMarketplace(_nftMarketplace);
+        cryptoDevsNFT = ICryptoDevsNFT(_cryptoDevsNFT);
+    }
 }
