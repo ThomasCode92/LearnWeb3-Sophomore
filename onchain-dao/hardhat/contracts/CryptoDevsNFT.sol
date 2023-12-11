@@ -3,7 +3,9 @@ pragma solidity ^0.8.18;
 
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
 
-contract CryptoDevsNFT is ERC721Enumerable {
+import './interfaces/ICryptoDevsNFT.sol';
+
+contract CryptoDevsNFT is ERC721Enumerable, ICryptoDevsNFT {
     // Initialize the ERC-721 contract
     constructor() ERC721('CryptoDevs', 'CD') {}
 
