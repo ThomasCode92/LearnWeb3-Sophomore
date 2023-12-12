@@ -48,7 +48,10 @@ contract CryptoDevsDAO is Ownable {
     // A payable constructor which initializes the contract
     // instances for FakeNFTMarketplace and CryptoDevsNFT
     // The payable allows this contract to accept an ETH deposit when it is being deployed
-    constructor(address _nftMarketplace, address _cryptoDevsNFT) payable {
+    constructor(
+        address _nftMarketplace,
+        address _cryptoDevsNFT
+    ) payable Ownable(msg.sender) {
         nftMarketplace = IFakeNFTMarketplace(_nftMarketplace);
         cryptoDevsNFT = ICryptoDevsNFT(_cryptoDevsNFT);
     }

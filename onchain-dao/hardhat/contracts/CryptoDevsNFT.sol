@@ -5,7 +5,7 @@ import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
 
 import './interfaces/ICryptoDevsNFT.sol';
 
-contract CryptoDevsNFT is ERC721Enumerable, ICryptoDevsNFT {
+contract CryptoDevsNFT is ERC721Enumerable {
     // Initialize the ERC-721 contract
     constructor() ERC721('CryptoDevs', 'CD') {}
 
