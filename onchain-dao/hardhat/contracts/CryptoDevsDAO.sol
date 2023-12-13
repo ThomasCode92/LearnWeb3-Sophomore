@@ -28,6 +28,12 @@ contract CryptoDevsDAO is Ownable {
         mapping(uint256 => bool) voters;
     }
 
+    // An enum containing possible options for a vote
+    enum Vote {
+        YAY, // YAY = 0
+        NAY // NAY = 1
+    }
+
     // A mapping of ID to proposal
     mapping(uint256 => Proposal) public proposals;
 
@@ -42,6 +48,16 @@ contract CryptoDevsDAO is Ownable {
     // called by someone who owns at least 1 CryptoDevsNFT
     modifier nftHolderOnly() {
         require(cryptoDevsNFT.balanceOf(msg.sender) > 0, 'NOT_A_DAO_MEMBER');
+        _;
+    }
+
+    // A modifier which only allows a function be
+    // called if the given proposal's deadline has not been exceeded yet
+    modifier activeProposalOnly(uint256 _proposalIndex) {
+        require(
+            proposals[_proposalIndex].deadline > block.timestamp,
+            'DEADLINE_EXCEEDED'
+        );
         _;
     }
 
@@ -71,5 +87,35 @@ contract CryptoDevsDAO is Ownable {
         numProposals++;
 
         return numProposals - 1;
+    }
+
+    /// @dev voteOnProposal() allows a CryptoDevsNFT holder to cast their vote on an active proposal
+    /// @param _proposalIndex - the index of the proposal to vote on in the proposals array
+    /// @param _vote - the the of vote they want to cast (YAY or NAY)
+    function voteOnProposal(
+        uint256 _proposalIndex,
+        Vote _vote
+    ) external nftHolderOnly activeProposalOnly(_proposalIndex) {
+        Proposal storage proposal = proposals[_proposalIndex];
+        uint256 voterNFTBalance = cryptoDevsNFT.balanceOf(msg.sender);
+        uint256 numVotes = 0;
+
+        // Calculate how many NFTs are owned by the voter
+        // that haven't already been used for voting on this proposal
+        for (uint256 i = 0; i < voterNFTBalance; i++) {
+            uint256 tokenId = cryptoDevsNFT.tokenOfOwnerByIndex(msg.sender, i);
+            if (proposal.voters[tokenId] == false) {
+                numVotes++;
+                proposal.voters[tokenId] = true;
+            }
+        }
+
+        require(numVotes > 0, 'ALREADY_VOTED');
+
+        if (_vote == Vote.YAY) {
+            proposal.yayVotes += numVotes;
+        } else {
+            proposal.nayVotes += numVotes;
+        }
     }
 }
