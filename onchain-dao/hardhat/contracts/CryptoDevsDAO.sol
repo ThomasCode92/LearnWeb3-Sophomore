@@ -87,6 +87,12 @@ contract CryptoDevsDAO is Ownable {
         cryptoDevsNFT = ICryptoDevsNFT(_cryptoDevsNFT);
     }
 
+    // The following two functions allow the contract to accept ETH deposits
+    // directly from a wallet without calling a function
+    receive() external payable {}
+
+    fallback() external payable {}
+
     /// @dev createProposal() allows a CryptoDevsNFT holder to create a new proposal in the DAO
     /// @param _nftTokenId - the tokenID of the NFT to be purchased from FakeNFTMarketplace if this proposal passes
     /// @return Returns the proposal index for the newly created proposal
@@ -149,5 +155,13 @@ contract CryptoDevsDAO is Ownable {
         }
 
         proposal.executed = true;
+    }
+
+    /// @dev withdrawEther() allows the contract owner (deployer) to withdraw the ETH from the contract
+    function withdrawEther() external onlyOwner {
+        uint256 amount = address(this).balance;
+        require(amount > 0, 'NOTHING_TO_WITHDRAW');
+        (bool sent, ) = payable(msg.sender).call{value: amount}('');
+        require(sent, 'FAILED_TO_WiTHDRAW_ETHER');
     }
 }
