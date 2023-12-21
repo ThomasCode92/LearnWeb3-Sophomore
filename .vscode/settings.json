@@ -2,6 +2,7 @@
   // Extensions
   "gitlens.codeLens.recentChange.enabled": false,
   "gitlens.codeLens.authors.enabled": false,
+  "inlineFold.autoFold": false,
   "jest.jestCommandLine": "npm run test --",
   "jest.rootPath": "./",
   "jest.autoRun": {
